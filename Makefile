@@ -156,6 +156,13 @@ ifeq ($(findstring --network monad-mainnet,$(ARGS)),--network monad-mainnet)
 	NETWORK_ARGS := --rpc-url $(MONAD_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=143&apikey=$(ETHERSCAN_API_KEY)" --chain 143 -vvvv
 endif
 
+# Arc mainnet (chain 5042) launches 2026-09-16; forge 1.5.1 has no chain alias for it, and the
+# Blockscout explorer mirrors the testnet host (testnet.arcscan.app -> arcscan.app). Confirm the
+# RPC and verifier URLs against Circle's published mainnet endpoints before the first deploy.
+ifeq ($(findstring --network arc-mainnet,$(ARGS)),--network arc-mainnet)
+	NETWORK_ARGS := --rpc-url $(ARC_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier blockscout --verifier-url https://arcscan.app/api --chain 5042 -vvvv
+endif
+
 deploy-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
@@ -244,4 +251,7 @@ deploy-unichain-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
 deploy-monad-mainnet:
+	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
+
+deploy-arc-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
