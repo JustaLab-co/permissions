@@ -12,7 +12,7 @@ clean  :; forge clean
 # Remove modules
 remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "modules"
 
-install :; forge install foundry-rs/forge-std && forge install OpenZeppelin/openzeppelin-contracts && forge install Vectorized/solady && forge install eth-infinitism/account-abstraction@releases/v0.8 --no-commit && forge install base-org/webauthn-sol --no-commit && forge install JustaName-id/justanaccount --no-commit
+install :; forge install foundry-rs/forge-std && forge install OpenZeppelin/openzeppelin-contracts && forge install Vectorized/solady && forge install eth-infinitism/account-abstraction@releases/v0.8 --no-commit && forge install base-org/webauthn-sol --no-commit && forge install JustaLab-co/justanaccount --no-commit
 
 # Update Dependencies
 update:; forge update
@@ -156,11 +156,12 @@ ifeq ($(findstring --network monad-mainnet,$(ARGS)),--network monad-mainnet)
 	NETWORK_ARGS := --rpc-url $(MONAD_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=143&apikey=$(ETHERSCAN_API_KEY)" --chain 143 -vvvv
 endif
 
-# Arc mainnet (chain 5042) launches 2026-09-16; forge 1.5.1 has no chain alias for it, and the
-# Blockscout explorer mirrors the testnet host (testnet.arcscan.app -> arcscan.app). Confirm the
-# RPC and verifier URLs against Circle's published mainnet endpoints before the first deploy.
+# Arc mainnet (chain 5042) is covered by Etherscan V2 (https://arc.etherscan.io), so verify there
+# rather than against the Blockscout explorer at explorer.arc.io, which sits behind a Cloudflare
+# managed challenge that rejects forge's HTTP client. forge 1.5.1 has no chain alias for 5042, so
+# the custom verifier is used with chainid and apikey in the URL, as for Monad above.
 ifeq ($(findstring --network arc-mainnet,$(ARGS)),--network arc-mainnet)
-	NETWORK_ARGS := --rpc-url $(ARC_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier blockscout --verifier-url https://arcscan.app/api --chain 5042 -vvvv
+	NETWORK_ARGS := --rpc-url $(ARC_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=5042&apikey=$(ETHERSCAN_API_KEY)" --chain 5042 -vvvv
 endif
 
 deploy-mainnet:
@@ -255,3 +256,14 @@ deploy-monad-mainnet:
 
 deploy-arc-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
+
+# Re-verify an already-deployed Arc mainnet contract on Etherscan V2 (https://arc.etherscan.io).
+ARC_MAINNET_MANAGER := 0xf1b40E3D5701C04d86F7828f0EB367B9C90901D8
+
+verify-arc-mainnet:
+	@forge verify-contract $(ARC_MAINNET_MANAGER) src/JustaPermissionManager.sol:JustaPermissionManager \
+		--verifier custom \
+		--verifier-url "https://api.etherscan.io/v2/api?chainid=5042&apikey=$(ETHERSCAN_API_KEY)" \
+		--chain 5042 \
+		--compiler-version v0.8.30+commit.73712a01 \
+		--watch

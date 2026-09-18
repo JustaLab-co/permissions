@@ -30,7 +30,7 @@
 
 ## Overview
 
-`JustaPermissionManager` is a Solidity smart contract that provides a delegation layer for [JustanAccount](https://github.com/justaname-id/justanaccount) smart accounts. It enables granular access control through delegated permissions, allowing account owners to grant time-limited permissions to "spenders" (delegated addresses) to execute specific actions on their behalf with fine-grained call authorization and spending limits.
+`JustaPermissionManager` is a Solidity smart contract that provides a delegation layer for [JustanAccount](https://github.com/justalab-co/justanaccount) smart accounts. It enables granular access control through delegated permissions, allowing account owners to grant time-limited permissions to "spenders" (delegated addresses) to execute specific actions on their behalf with fine-grained call authorization and spending limits.
 
 ## Features
 
@@ -275,7 +275,7 @@ JustaPermissionManager acts as an owner of JustanAccount instances:
 
 This implementation was influenced by and builds upon:
 
-- **[JustanAccount](https://github.com/justaname-id/justanaccount)**: The target smart account contract that JustaPermissionManager delegates to.
+- **[JustanAccount](https://github.com/justalab-co/justanaccount)**: The target smart account contract that JustaPermissionManager delegates to.
 - **[Solady](https://github.com/Vectorized/solady)**: Optimized utility libraries including DateTimeLib, DynamicArrayLib, SafeTransferLib, and ReentrancyGuard.
 - **[OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts)**: Standard implementations for EIP-712, SafeERC20, and ERC165Checker.
 - **[Uniswap Permit2](https://github.com/Uniswap/permit2)**: Token approval standard integration for enhanced security.

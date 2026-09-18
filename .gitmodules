@@ -16,7 +16,7 @@
 	url = https://github.com/base-org/webauthn-sol
 [submodule "lib/justanaccount"]
 	path = lib/justanaccount
-	url = https://github.com/JustaName-id/justanaccount
+	url = https://github.com/JustaLab-co/justanaccount
 [submodule "lib/permit2"]
 	path = lib/permit2
 	url = https://github.com/uniswap/permit2
