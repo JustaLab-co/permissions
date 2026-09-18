@@ -256,14 +256,3 @@ deploy-monad-mainnet:
 
 deploy-arc-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
-
-# Re-verify an already-deployed Arc mainnet contract on Etherscan V2 (https://arc.etherscan.io).
-ARC_MAINNET_MANAGER := 0xf1b40E3D5701C04d86F7828f0EB367B9C90901D8
-
-verify-arc-mainnet:
-	@forge verify-contract $(ARC_MAINNET_MANAGER) src/JustaPermissionManager.sol:JustaPermissionManager \
-		--verifier custom \
-		--verifier-url "https://api.etherscan.io/v2/api?chainid=5042&apikey=$(ETHERSCAN_API_KEY)" \
-		--chain 5042 \
-		--compiler-version v0.8.30+commit.73712a01 \
-		--watch
