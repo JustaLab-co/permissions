@@ -164,6 +164,13 @@ ifeq ($(findstring --network arc-mainnet,$(ARGS)),--network arc-mainnet)
 	NETWORK_ARGS := --rpc-url $(ARC_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=5042&apikey=$(ETHERSCAN_API_KEY)" --chain 5042 -vvvv
 endif
 
+# HyperEVM mainnet (chain 999) is covered by Etherscan V2 (https://hyperevmscan.io). forge 1.5.1
+# has no chain alias for 999, so the custom verifier is used with chainid and apikey in the URL,
+# as for Monad and Arc above.
+ifeq ($(findstring --network hyperevm-mainnet,$(ARGS)),--network hyperevm-mainnet)
+	NETWORK_ARGS := --rpc-url $(HYPEREVM_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=999&apikey=$(ETHERSCAN_API_KEY)" --chain 999 -vvvv
+endif
+
 deploy-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
@@ -255,4 +262,7 @@ deploy-monad-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
 deploy-arc-mainnet:
+	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
+
+deploy-hyperevm-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)

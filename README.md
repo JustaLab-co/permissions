@@ -27,6 +27,7 @@
 | HyveChain        | 7847     | -                | -        |
 | Unichain         | 130      | -                | -        |
 | Monad            | 143      | -                | -        |
+| HyperEVM         | 999      | -                | -        |
 
 ## Overview
 
