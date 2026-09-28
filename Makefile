@@ -164,6 +164,10 @@ ifeq ($(findstring --network arc-mainnet,$(ARGS)),--network arc-mainnet)
 	NETWORK_ARGS := --rpc-url $(ARC_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier custom --verifier-url "https://api.etherscan.io/v2/api?chainid=5042&apikey=$(ETHERSCAN_API_KEY)" --chain 5042 -vvvv
 endif
 
+ifeq ($(findstring --network citrea-mainnet,$(ARGS)),--network citrea-mainnet)
+	NETWORK_ARGS := --rpc-url $(CITREA_MAINNET_RPC_URL) --account $(ACCOUNT) --broadcast --verify --verifier blockscout --verifier-url https://explorer.mainnet.citrea.xyz/api --chain 4114 -vvvv
+endif
+
 deploy-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
@@ -255,4 +259,7 @@ deploy-monad-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
 
 deploy-arc-mainnet:
+	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
+
+deploy-citrea-mainnet:
 	@forge script script/DeployJustaPermissionManager.s.sol:DeployJustaPermissionManager $(NETWORK_ARGS)
