@@ -28,6 +28,7 @@
 | Unichain         | 130      | -                | -        |
 | Monad            | 143      | -                | -        |
 | Citrea           | 4114     | -                | -        |
+| ADI              | 36900    | -                | -        |
 
 ## Overview
 
