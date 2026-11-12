@@ -4,7 +4,7 @@ pragma solidity 0.8.30;
 import { BaseAccount } from "@account-abstraction/core/BaseAccount.sol";
 import { EntryPoint } from "@account-abstraction/core/EntryPoint.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { Test, Vm, console } from "forge-std/Test.sol";
+import { Test, Vm } from "forge-std/Test.sol";
 import { JustanAccount } from "justanaccount/JustanAccount.sol";
 import { PreparePermission } from "script/PreparePermission.s.sol";
 import { JustaPermissionManager } from "src/JustaPermissionManager.sol";
@@ -347,8 +347,9 @@ contract TestReusableCheckers is Test, PreparePermission {
         JustaPermissionManager.Permission memory permission =
             _approveOneRule(LANDLORD, manager.ANY_FN_SEL(), checker, manager.NATIVE_TOKEN());
 
-        bytes memory deposit = abi.encodeWithSignature("deposit()");
-        _expectRejected(LANDLORD, bytes4(deposit), checker);
+        bytes4 depositSel = 0xd0e30db0; // deposit()
+        bytes memory deposit = abi.encodeWithSelector(depositSel);
+        _expectRejected(LANDLORD, depositSel, checker);
         _runCall(permission, LANDLORD, 0.01 ether, deposit);
     }
 
@@ -362,7 +363,7 @@ contract TestReusableCheckers is Test, PreparePermission {
         _runCall(permission, address(token), 0, abi.encodeCall(IERC20.approve, (LANDLORD, 1)));
     }
 
-    function test_GasForADeployAndACheck() public {
+    function test_DeployAndCheckStayWithinGasBudget() public {
         uint256 before = gasleft();
         address checker = factory.deploy(address(argInTemplate), _onlyTo(LANDLORD));
         uint256 deployGas = before - gasleft();
@@ -376,10 +377,10 @@ contract TestReusableCheckers is Test, PreparePermission {
         ArgIn(checker).canExecute(0, alice, SPENDER, address(token), 0, data);
         uint256 checkGas = before - gasleft();
 
-        console.log("deploy a new ArgIn checker (1 address):", deployGas);
-        console.log("deploy call when it already exists:     ", redeployGas);
-        console.log("one ArgIn check (cold):                 ", checkGas);
-        assertLt(checkGas, 15_000);
+        // Measured about 91k, 3k and 7.3k. The budgets catch a regression, not the exact number.
+        assertLt(deployGas, 120_000, "first deploy of a rule");
+        assertLt(redeployGas, 10_000, "deploy of a rule that already exists");
+        assertLt(checkGas, 15_000, "one cold check");
     }
 
 }
